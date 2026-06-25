@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nebula HiFi • Android 17 Ki Energy Animations</title>
+    <style>
+        :root {
+            --space-bg: #040508;
+            --glass-bg: rgba(18, 20, 32, 0.65);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --android17-cyan: #00bfff;
+            --android17-purple: #7b2cbf;
+            --energy-gold: #ffd700;
+            --energy-red: #ff1744;
+            --nebula-pink: #ff007f;
+            --text-main: #ffffff;
+            --text-muted: #a0aec0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--space-bg);
+            color: var(--text-main);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* ⚡ ANDROID 17 KI ENERGY BARRIER BACKGROUND ⚡ */
+        .cosmic-ki-barrier {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .energy-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.4;
+            animation: kiPulse 4s ease-in-out infinite;
+        }
+
+        .orb-1 {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, var(--android17-cyan), transparent);
+            top: -100px;
+            left: -100px;
+            animation-delay: 0s;
+        }
+
+        .orb-2 {
+            width: 350px;
+            height: 350px;
+            background: radial-gradient(circle, var(--android17-purple), transparent);
+            bottom: -80px;
+            right: -80px;
+            animation-delay: 1.5s;
+        }
+
+        .orb-3 {
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, var(--energy-gold), transparent);
+            top: 40%;
+            left: 50%;
+            opacity: 0.25;
+            animation-delay: 3s;
+        }
+
+        @keyframes kiPulse {
+            0% {
+                transform: translate(0, 0) scale(1);
+                opacity: 0.3;
+            }
+            50% {
+                transform: translate(30px, 20px) scale(1.2);
+                opacity: 0.5;
+            }
+            100% {
+                transform: translate(0, 0) scale(1);
+                opacity: 0.3;
+            }
+        }
+
+        /* ⚡ ENERGY WAVES & KI THREADS ⚡ */
+        .energy-wave {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .wave-line {
+            position: absolute;
+            background: linear-gradient(90deg, transparent, var(--android17-cyan), transparent);
+            opacity: 0;
+            animation: waveScroll 3s ease-in-out infinite;
+        }
+
+        @keyframes waveScroll {
+            0% {
+                opacity: 0;
+                transform: translateX(-100%) translateY(0);
+            }
+            50% {
+                opacity: 0.6;
+            }
+            100% {
+                opacity: 0;
+                transform: translateX(100%) translateY(20px);
+            }
+        }
+
+        /* Main Container */
+        .workspace {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+            position: relative;
+            z-index: 10;
+        }
+
+        .screen {
+            flex: 1;
+            display: none;
+            flex-direction: column;
+            overflow-y: auto;
+            padding: 24px 32px;
+            animation: android17Entry 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        /* ⚡ ANDROID 17 ENTRY ANIMATION: KI BARRIER DESCENDS ⚡ */
+        @keyframes android17Entry {
+            0% {
+                opacity: 0;
+                clip-path: inset(100% 0 0 0);
+                filter: blur(20px);
+            }
+            50% {
+                clip-path: inset(50% 0 0 0);
+                filter: blur(10px);
+            }
+            100% {
+                opacity: 1;
+                clip-path: inset(0 0 0 0);
+                filter: blur(0);
+            }
+        }
+
+        /* ⚡ PLAYER LAYOUT ⚡ */
+        .player-layout {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 40px;
+            max-width: 1300px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* ⚡ VISUALIZER STAGE WITH KI ENERGY RINGS ⚡ */
+        .visualizer-stage {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 1;
+            max-width: 480px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Android 17 Energy Barrier Rings */
+        .energy-ring {
+            position: absolute;
+            border: 3px solid var(--android17-cyan);
+            border-radius: 50%;
+            filter: drop-shadow(0 0 15px var(--android17-cyan));
+            opacity: 0.7;
+            animation: ringRotate 4s linear infinite;
+        }
+
+        .ring-1 {
+            width: 100%;
+            height: 100%;
+            animation-duration: 4s;
+        }
+
+        .ring-2 {
+            width: 85%;
+            height: 85%;
+            animation-duration: 5s;
+            animation-direction: reverse;
+            border-color: var(--android17-purple);
+            filter: drop-shadow(0 0 15px var(--android17-purple));
+        }
+
+        .ring-3 {
+            width: 65%;
+            height: 65%;
+            animation-duration: 6s;
+            border-color: var(--energy-gold);
+            filter: drop-shadow(0 0 15px var(--energy-gold));
+        }
+
+        @keyframes ringRotate {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Pulsing Ki Energy Aura */
+        .ki-aura {
+            position: absolute;
+            width: 70%;
+            height: 70%;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(0, 191, 255, 0.3), transparent);
+            animation: kiAuraPulse 2s ease-in-out infinite;
+            filter: blur(15px);
+        }
+
+        @keyframes kiAuraPulse {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 0.3;
+            }
+            50% {
+                transform: scale(1.15);
+                opacity: 0.6;
+            }
+        }
+
+        /* Album Art Disc */
+        .artwork-disc {
+            width: 58%;
+            aspect-ratio: 1;
+            border-radius: 50%;
+            position: relative;
+            z-index: 2;
+            box-shadow: 0 0 60px rgba(0, 191, 255, 0.4), 0 0 30px rgba(0, 0, 0, 0.8);
+            border: 3px solid rgba(0, 191, 255, 0.5);
+            overflow: hidden;
+            animation: discFloat 3s ease-in-out infinite;
+        }
+
+        @keyframes discFloat {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-15px);
+            }
+        }
+
+        .artwork-disc.playing {
+            animation: discRotate 20s linear infinite, discFloat 3s ease-in-out infinite;
+        }
+
+        @keyframes discRotate {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .artwork-disc img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .disc-center-hole {
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            background: var(--space-bg);
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 2px solid rgba(0, 191, 255, 0.6);
+            z-index: 3;
+            box-shadow: 0 0 15px var(--android17-cyan);
+        }
+
+        /* ⚡ KI ENERGY BURST ON TRACK CHANGE ⚡ */
+        .ki-burst {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 2px solid var(--android17-cyan);
+            top: 0;
+            left: 0;
+            animation: kiBurst 0.8s ease-out forwards;
+            pointer-events: none;
+        }
+
+        @keyframes kiBurst {
+            0% {
+                transform: scale(0.8);
+                opacity: 1;
+                border-width: 3px;
+            }
+            100% {
+                transform: scale(2.5);
+                opacity: 0;
+                border-width: 1px;
+            }
+        }
+
+        /* Player Controls Panel */
+        .player-controls-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(32px);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 36px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
+            position: relative;
+            overflow: hidden;
+            animation: panelSlideIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes panelSlideIn {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .player-controls-panel::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(0, 191, 255, 0.4), transparent);
+        }
+
+        .track-header-wrap {
+            text-align: center;
+        }
+
+        .song-title {
+            font-size: 2rem;
+            font-weight: 900;
+            color: #fff;
+            margin-bottom: 6px;
+            letter-spacing: -0.5px;
+            animation: titleGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes titleGlow {
+            0%, 100% {
+                text-shadow: 0 0 10px rgba(0, 191, 255, 0.3);
+            }
+            50% {
+                text-shadow: 0 0 25px rgba(0, 191, 255, 0.6);
+            }
+        }
+
+        .artist-name {
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        /* ⚡ MARTIAL ARTS ATTACK CONTROLS ⚡ */
+        .controls-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 28px;
+            margin-top: 10px;
+        }
+
+        .ctrl-btn {
+            background: rgba(0, 191, 255, 0.1);
+            border: 2px solid var(--android17-cyan);
+            color: var(--android17-cyan);
+            width: 54px;
+            height: 54px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 0 15px rgba(0, 191, 255, 0.2);
+            font-weight: 800;
+            position: relative;
+        }
+
+        .ctrl-btn:hover {
+            background: rgba(0, 191, 255, 0.25);
+            transform: scale(1.1);
+            box-shadow: 0 0 30px rgba(0, 191, 255, 0.6);
+        }
+
+        .ctrl-btn:active {
+            animation: kiStrike 0.4s ease-out;
+        }
+
+        @keyframes kiStrike {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 20px rgba(0, 191, 255, 0.8);
+            }
+            50% {
+                transform: scale(0.88);
+                box-shadow: 0 0 40px rgba(255, 23, 68, 0.8);
+            }
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 15px rgba(0, 191, 255, 0.2);
+            }
+        }
+
+        /* ⚡ HERO PLAY/PAUSE BUTTON: KI ATTACK ORBS ⚡ */
+        .play-pause-hero {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--android17-cyan), var(--android17-purple));
+            border: 3px solid rgba(255, 255, 255, 0.4);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 0 50px rgba(0, 191, 255, 0.7), inset 0 0 20px rgba(0, 191, 255, 0.3);
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .play-pause-hero::before {
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.4), transparent);
+            animation: kiCharge 1.5s ease-in-out infinite;
+        }
+
+        @keyframes kiCharge {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 0.3;
+            }
+            50% {
+                transform: scale(1.2);
+                opacity: 0.7;
+            }
+        }
+
+        .play-pause-hero:hover {
+            transform: scale(1.15);
+            box-shadow: 0 0 70px rgba(0, 191, 255, 1), inset 0 0 30px rgba(255, 215, 0, 0.5);
+        }
+
+        .play-pause-hero:active {
+            animation: energyBlast 0.6s ease-out;
+        }
+
+        @keyframes energyBlast {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 50px rgba(0, 191, 255, 0.7);
+            }
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 0 100px rgba(255, 23, 68, 1);
+            }
+            100% {
+                transform: scale(1.15);
+                box-shadow: 0 0 70px rgba(0, 191, 255, 1);
+            }
+        }
+
+        .play-pause-hero svg {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Progress Bar */
+        .scrubber-wrap {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(0, 191, 255, 0.15);
+            border-radius: 4px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(0, 191, 255, 0.3);
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--android17-cyan), var(--android17-purple), var(--energy-gold));
+            border-radius: 4px;
+            transition: width 0.1s linear;
+            box-shadow: 0 0 15px rgba(0, 191, 255, 0.6);
+        }
+
+        /* Floating Dock */
+        .floating-dock {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(16, 20, 32, 0.95);
+            backdrop-filter: blur(28px);
+            border: 2px solid var(--android17-cyan);
+            border-radius: 40px;
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(0, 191, 255, 0.4);
+            z-index: 1000;
+            animation: dockFloat 3s ease-in-out infinite;
+        }
+
+        @keyframes dockFloat {
+            0%, 100% {
+                transform: translateX(-50%) translateY(0);
+            }
+            50% {
+                transform: translateX(-50%) translateY(-8px);
+            }
+        }
+
+        .dock-item {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 12px 20px;
+            border-radius: 30px;
+            font-weight: 800;
+            font-size: 0.92rem;
+            cursor: pointer;
+            transition: all 0.25s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dock-item::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 191, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .dock-item:hover {
+            color: #fff;
+            background: rgba(0, 191, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .dock-item:hover::before {
+            left: 100%;
+        }
+
+        .dock-item.active {
+            color: #fff;
+            background: linear-gradient(135deg, var(--android17-cyan), var(--android17-purple));
+            box-shadow: 0 0 20px rgba(0, 191, 255, 0.8);
+        }
+
+        #toast {
+            position: fixed;
+            top: 80px;
+            right: 32px;
+            background: rgba(16, 20, 32, 0.95);
+            border: 2px solid var(--android17-cyan);
+            color: #fff;
+            padding: 12px 20px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 191, 255, 0.4);
+            z-index: 5000;
+            transform: translateY(-100px);
+            opacity: 0;
+            transition: all 0.3s;
+        }
+
+        #toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ⚡ ANDROID 17 KI ENERGY BARRIERS ⚡ -->
+    <div class="cosmic-ki-barrier">
+        <div class="energy-orb orb-1"></div>
+        <div class="energy-orb orb-2"></div>
+        <div class="energy-orb orb-3"></div>
+        <div class="energy-wave">
+            <div class="wave-line" style="top: 20%; height: 2px; width: 150%;"></div>
+            <div class="wave-line" style="top: 40%; height: 1px; width: 180%; animation-delay: 0.5s;"></div>
+            <div class="wave-line" style="top: 60%; height: 2px; width: 150%; animation-delay: 1s;"></div>
+            <div class="wave-line" style="top: 80%; height: 1px; width: 180%; animation-delay: 1.5s;"></div>
+        </div>
+    </div>
+
+    <!-- Main Workspace -->
+    <div class="workspace">
+        <!-- PLAYER SCREEN -->
+        <div id="screen-player" class="screen active">
+            <div class="player-layout">
+                <!-- Visualizer with Ki Energy Rings -->
+                <div class="visualizer-stage">
+                    <div class="energy-ring ring-1"></div>
+                    <div class="energy-ring ring-2"></div>
+                    <div class="energy-ring ring-3"></div>
+                    <div class="ki-aura"></div>
+                    
+                    <div id="disc" class="artwork-disc playing">
+                        <img id="track-art" src="https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?w=600&auto=format&fit=crop&q=80" alt="Album Art">
+                    </div>
+                    <div class="disc-center-hole"></div>
+                </div>
+
+                <!-- Controls Panel -->
+                <div class="player-controls-panel">
+                    <div class="track-header-wrap">
+                        <h2 id="track-title" class="song-title">Blinding Lights</h2>
+                        <p id="track-artist" class="artist-name">The Weeknd • After Hours</p>
+                    </div>
+
+                    <!-- Scrubber -->
+                    <div class="scrubber-wrap">
+                        <div style="display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: 700; color: var(--text-muted); font-family: monospace;">
+                            <span id="time-curr">0:00</span>
+                            <span id="time-tot">3:20</span>
+                        </div>
+                        <div class="progress-bar" onclick="seek(event)">
+                            <div id="prog-fill" class="progress-fill"></div>
+                        </div>
+                    </div>
+
+                    <!-- Android 17 Martial Arts Controls -->
+                    <div class="controls-row">
+                        <button class="ctrl-btn" onclick="prevTrack()" title="Energy Left Strike">
+                            <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
+                        </button>
+                        
+                        <!-- Hero Ki Orb Attack Button -->
+                        <button id="hero-play-btn" class="play-pause-hero" onclick="togglePlay(event)" title="Ki Energy Release">
+                            <svg id="icon-play" width="40" height="40" fill="currentColor" viewBox="0 0 24 24" style="display:none; margin-left:4px;"><path d="M8 5v14l11-7z"/></svg>
+                            <svg id="icon-pause" width="40" height="40" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                        </button>
+
+                        <button class="ctrl-btn" onclick="nextTrack()" title="Energy Right Strike">
+                            <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Dock with Android 17 Theme -->
+    <nav class="floating-dock">
+        <button class="dock-item active" onclick="showT('🌌 Nebula Android 17 Activated')">
+            <span>🌌 Nebula HiFi</span>
+        </button>
+        <button class="dock-item" onclick="showT('⚡ Ki Energy Mode Online')">
+            <span>⚡ Ki Energy Mode</span>
+        </button>
+    </nav>
+
+    <!-- Toast Notification -->
+    <div id="toast"><span id="t-msg">Ready</span></div>
+
+    <script>
+        const PLAYLIST = [
+            { id: '1', title: 'Blinding Lights', artist: 'The Weeknd', dur: 200, cover: 'https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?w=600&auto=format&fit=crop&q=80', freqs: [261.63, 311.13, 392.00, 466.16], tempo: 171 },
+            { id: '2', title: 'Bohemian Rhapsody', artist: 'Queen', dur: 354, cover: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600&auto=format&fit=crop&q=80', freqs: [233.08, 293.66, 349.23, 440.00], tempo: 72 },
+            { id: '3', title: 'Starboy', artist: 'The Weeknd ft. Daft Punk', dur: 230, cover: 'https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=600&auto=format&fit=crop&q=80', freqs: [196.00, 246.94, 293.66, 329.63], tempo: 186 }
+        ];
+
+        let curIdx = 0, isPlay = true, actx = null, mg = null, sInt = null, curSec = 0, tmr = null;
+
+        window.onload = () => { loadTrack(0, true); };
+
+        function initAudio() {
+            if (!actx) {
+                actx = new (window.AudioContext || window.webkitAudioContext)();
+                mg = actx.createGain();
+                mg.gain.value = 0.3;
+                mg.connect(actx.destination);
+            }
+            if (actx.state === 'suspended') actx.resume();
+        }
+
+        function startSynth(t) {
+            initAudio();
+            stopSynth();
+            let st = 0;
+            const bMs = (60 / t.tempo) * 1000;
+            sInt = setInterval(() => {
+                if (!isPlay || !actx) return;
+                const f = t.freqs[st % t.freqs.length];
+                playTone(f, bMs / 1000, 'sine', 0.4);
+                playTone(f * 1.5, bMs / 1000, 'triangle', 0.2);
+                if (st % 2 === 0) playTone(60, 0.15, 'sine', 0.5);
+                st++;
+            }, bMs);
+        }
+
+        function playTone(f, d, tp, v) {
+            const o = actx.createOscillator(), g = actx.createGain();
+            o.type = tp;
+            o.frequency.value = f;
+            g.gain.setValueAtTime(v, actx.currentTime);
+            g.gain.exponentialRampToValueAtTime(0.0001, actx.currentTime + d);
+            o.connect(g);
+            g.connect(mg);
+            o.start();
+            o.stop(actx.currentTime + d);
+        }
+
+        function stopSynth() {
+            if (sInt) clearInterval(sInt);
+        }
+
+        function loadTrack(i, ap = true) {
+            curIdx = i;
+            const t = PLAYLIST[curIdx];
+            document.getElementById('track-title').innerText = t.title;
+            document.getElementById('track-artist').innerText = t.artist;
+            document.getElementById('track-art').src = t.cover;
+            document.getElementById('time-tot').innerText = fmt(t.dur);
+            curSec = 0;
+            updProg();
+
+            // ⚡ Create Ki Burst on Track Change ⚡
+            const disc = document.getElementById('disc');
+            const burst = document.createElement('div');
+            burst.className = 'ki-burst';
+            disc.appendChild(burst);
+            setTimeout(() => burst.remove(), 800);
+
+            if (ap) {
+                isPlay = true;
+                updPlayBtn();
+                startSynth(t);
+                startTimer(t);
+                document.getElementById('disc').classList.add('playing');
+                showT(`⚡ Channeling: "${t.title}"`);
+            }
+        }
+
+        function togglePlay(e) {
+            isPlay = !isPlay;
+            updPlayBtn();
+
+            if (isPlay) {
+                startSynth(PLAYLIST[curIdx]);
+                startTimer(PLAYLIST[curIdx]);
+                document.getElementById('disc').classList.add('playing');
+                showT('⚡ Ki Energy Released!');
+            } else {
+                stopSynth();
+                clearInterval(tmr);
+                document.getElementById('disc').classList.remove('playing');
+                showT('✋ Ki Energy Contained');
+            }
+        }
+
+        function updPlayBtn() {
+            document.getElementById('icon-play').style.display = isPlay ? 'none' : 'block';
+            document.getElementById('icon-pause').style.display = isPlay ? 'block' : 'none';
+        }
+
+        function prevTrack() {
+            loadTrack((curIdx - 1 + PLAYLIST.length) % PLAYLIST.length, true);
+        }
+
+        function nextTrack() {
+            loadTrack((curIdx + 1) % PLAYLIST.length, true);
+        }
+
+        function startTimer(t) {
+            clearInterval(tmr);
+            tmr = setInterval(() => {
+                if (!isPlay) return;
+                curSec++;
+                if (curSec >= t.dur) nextTrack();
+                updProg();
+            }, 1000);
+        }
+
+        function updProg() {
+            document.getElementById('prog-fill').style.width = ((curSec / PLAYLIST[curIdx].dur) * 100) + '%';
+            document.getElementById('time-curr').innerText = fmt(curSec);
+        }
+
+        function seek(e) {
+            const r = e.currentTarget.getBoundingClientRect();
+            curSec = Math.floor(PLAYLIST[curIdx].dur * ((e.clientX - r.left) / r.width));
+            updProg();
+        }
+
+        function fmt(s) {
+            return `${Math.floor(s / 60)}:${Math.floor(s % 60) < 10 ? '0' : ''}${Math.floor(s % 60)}`;
+        }
+
+        let tt = null;
+        function showT(m) {
+            const t = document.getElementById('toast');
+            document.getElementById('t-msg').innerText = m;
+            t.classList.add('show');
+            if (tt) clearTimeout(tt);
+            tt = setTimeout(() => t.classList.remove('show'), 3000);
+        }
+    </script>
+</body>
+</html>

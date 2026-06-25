@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nebula Music App HiFi - Radically Immersive Player & Solo Studio</title>
+    <style>
+        :root {
+            --space-bg: #040508;
+            --glass-bg: rgba(18, 20, 32, 0.65);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-highlight: rgba(255, 255, 255, 0.15);
+            --nebula-purple: #9d4edd;
+            --nebula-pink: #ff007f;
+            --nebula-cyan: #00f2fe;
+            --nebula-gold: #ffbe0b;
+            --text-main: #ffffff;
+            --text-muted: #a0aec0;
+            --code-bg: #080a10;
+        }
+
+        * {
+            box-sizing: border-box; margin: 0; padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--space-bg); color: var(--text-main);
+            height: 100vh; overflow: hidden; display: flex; flex-direction: column;
+            position: relative;
+        }
+
+        .cosmic-orb {
+            position: absolute; border-radius: 50%; filter: blur(90px); z-index: 0;
+            opacity: 0.45; pointer-events: none; animation: drift 14s infinite alternate ease-in-out;
+        }
+        .orb-1 { width: 450px; height: 450px; background: var(--nebula-purple); top: -100px; left: -100px; }
+        .orb-2 { width: 500px; height: 500px; background: #0a1b3e; bottom: -150px; right: -100px; animation-duration: 18s; }
+        .orb-3 { width: 350px; height: 350px; background: var(--nebula-pink); top: 40%; left: 60%; opacity: 0.25; animation-duration: 22s; }
+
+        @keyframes drift {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(50px, 40px) scale(1.15); }
+        }
+
+        .header {
+            height: 70px; display: flex; align-items: center; justify-content: space-between;
+            padding: 0 32px; z-index: 10;
+        }
+
+        .brand {
+            display: flex; align-items: center; gap: 12px; font-size: 1.4rem; font-weight: 900;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #fff 0%, var(--nebula-pink) 50%, var(--nebula-cyan) 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+
+        .workspace { flex: 1; display: flex; overflow: hidden; position: relative; z-index: 10; }
+        .screen { flex: 1; display: none; flex-direction: column; overflow-y: auto; padding: 24px 32px 110px 32px; }
+        .screen.active { display: flex; animation: fadeUp 0.35s cubic-bezier(0.16, 1, 0.3, 1); }
+
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+
+        .player-layout {
+            display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 40px; height: 100%;
+            max-width: 1300px; margin: 0 auto; width: 100%; align-items: center;
+        }
+
+        .visualizer-stage {
+            position: relative; width: 100%; aspect-ratio: 1; max-width: 480px; margin: 0 auto;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        #nebula-canvas { position: absolute; width: 100%; height: 100%; top: 0; left: 0; pointer-events: none; z-index: 2; }
+
+        .artwork-disc {
+            width: 58%; aspect-ratio: 1; border-radius: 50%; position: relative; z-index: 1;
+            box-shadow: 0 0 50px rgba(0,0,0,0.8), 0 0 30px rgba(157, 78, 221, 0.3);
+            border: 3px solid rgba(255,255,255,0.15); overflow: hidden;
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .artwork-disc.playing { animation: spinDisc 20s linear infinite; }
+        @keyframes spinDisc { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        .artwork-disc img { width: 100%; height: 100%; object-fit: cover; }
+
+        .disc-center-hole {
+            position: absolute; width: 24px; height: 24px; background: var(--space-bg);
+            border-radius: 50%; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            border: 2px solid rgba(255,255,255,0.2); z-index: 3;
+        }
+
+        .player-controls-panel {
+            background: var(--glass-bg); backdrop-filter: blur(32px);
+            border: 1px solid var(--glass-border); border-radius: 28px; padding: 36px;
+            display: flex; flex-direction: column; gap: 24px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.6); position: relative; overflow: hidden;
+        }
+
+        .player-controls-panel::before {
+            content:""; position: absolute; top:0; left:0; right:0; height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+        }
+
+        .track-header-wrap { text-align: center; }
+        .song-title { font-size: 2rem; font-weight: 900; color: #fff; margin-bottom: 6px; letter-spacing: -0.5px; }
+        .artist-name { font-size: 1.15rem; color: var(--text-muted); font-weight: 600; }
+
+        .scrubber-wrap { display: flex; flex-direction: column; gap: 8px; }
+        .time-row { display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: 700; color: var(--text-muted); font-family: monospace; }
+        
+        .progress-bar {
+            width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; cursor: pointer; position: relative; overflow: hidden;
+        }
+        .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--nebula-purple), var(--nebula-pink), var(--nebula-cyan)); border-radius: 4px; transition: width 0.1s linear; }
+
+        .controls-row { display: flex; align-items: center; justify-content: center; gap: 28px; margin-top: 10px; }
+        
+        .ctrl-btn {
+            background: rgba(255,255,255,0.06); border: 1px solid var(--glass-border);
+            color: #fff; width: 54px; height: 54px; border-radius: 50%; display: flex;
+            align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;
+        }
+        .ctrl-btn:hover { background: rgba(255,255,255,0.15); transform: scale(1.08); }
+
+        .play-pause-hero {
+            width: 76px; height: 76px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--nebula-pink), var(--nebula-purple));
+            border: 2px solid rgba(255,255,255,0.4); color: #fff; display: flex;
+            align-items: center; justify-content: center; cursor: pointer;
+            box-shadow: 0 0 35px rgba(255, 0, 127, 0.5); transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .play-pause-hero:hover { transform: scale(1.1); box-shadow: 0 0 50px rgba(255, 0, 127, 0.8); }
+
+        .floating-dock {
+            position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+            background: rgba(16, 20, 32, 0.85); backdrop-filter: blur(28px);
+            border: 1px solid rgba(255,255,255,0.15); border-radius: 40px;
+            padding: 8px 16px; display: flex; align-items: center; gap: 8px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8), 0 0 30px rgba(157, 78, 221, 0.2);
+            z-index: 1000;
+        }
+
+        .dock-item {
+            background: transparent; border: none; color: var(--text-muted);
+            padding: 12px 20px; border-radius: 30px; font-weight: 800; font-size: 0.92rem;
+            cursor: pointer; transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex; align-items: center; gap: 8px; white-space: nowrap;
+        }
+
+        .dock-item:hover { color: #fff; background: rgba(255,255,255,0.08); transform: translateY(-4px); }
+        .dock-item.active { color: #fff; background: linear-gradient(135deg, var(--nebula-purple), var(--nebula-pink)); box-shadow: 0 0 20px rgba(255, 0, 127, 0.5); }
+
+        #toast { position: fixed; top: 80px; right: 32px; background: #151928; border: 1px solid var(--nebula-pink); color: #fff; padding: 12px 20px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); z-index: 5000; transform: translateY(-100px); opacity: 0; transition: all 0.3s; }
+        #toast.show { transform: translateY(0); opacity: 1; }
+    </style>
+</head>
+<body>
+    <div class="cosmic-orb orb-1"></div>
+    <div class="cosmic-orb orb-2"></div>
+    <div class="cosmic-orb orb-3"></div>
+
+    <header class="header">
+        <div class="brand">🌌 Nebula HiFi</div>
+    </header>
+
+    <div class="workspace">
+        <div id="screen-player" class="screen active">
+            <div class="player-layout">
+                <div class="visualizer-stage">
+                    <canvas id="nebula-canvas" width="480" height="480"></canvas>
+                    <div id="disc" class="artwork-disc playing">
+                        <img id="track-art" src="https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?w=600&auto=format&fit=crop&q=80" alt="Album Art">
+                    </div>
+                    <div class="disc-center-hole"></div>
+                </div>
+
+                <div class="player-controls-panel">
+                    <div class="track-header-wrap">
+                        <h2 id="track-title" class="song-title">Blinding Lights</h2>
+                        <p id="track-artist" class="artist-name">The Weeknd • After Hours</p>
+                    </div>
+
+                    <div class="scrubber-wrap">
+                        <div class="time-row">
+                            <span id="time-curr">0:00</span>
+                            <span id="time-tot">3:20</span>
+                        </div>
+                        <div class="progress-bar" onclick="seek(event)">
+                            <div id="prog-fill" class="progress-fill"></div>
+                        </div>
+                    </div>
+
+                    <div class="controls-row">
+                        <button class="ctrl-btn" onclick="prevTrack()">
+                            <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
+                        </button>
+                        <button id="hero-play-btn" class="play-pause-hero" onclick="togglePlay()">
+                            <svg id="icon-play" width="34" height="34" fill="currentColor" viewBox="0 0 24 24" style="display:none; margin-left:4px;"><path d="M8 5v14l11-7z"/></svg>
+                            <svg id="icon-pause" width="34" height="34" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                        </button>
+                        <button class="ctrl-btn" onclick="nextTrack()">
+                            <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <nav class="floating-dock">
+        <button class="dock-item active">🌌 Nebula Player</button>
+    </nav>
+
+    <div id="toast"><span id="t-msg">Ready</span></div>
+
+    <script>
+        const PLAYLIST = [
+            { id:'1', title:'Blinding Lights', artist:'The Weeknd', dur:200, cover:'https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?w=600&auto=format&fit=crop&q=80', freqs:[261.63, 311.13, 392.00, 466.16], tempo:171 },
+            { id:'2', title:'Bohemian Rhapsody', artist:'Queen', dur:354, cover:'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600&auto=format&fit=crop&q=80', freqs:[233.08, 293.66, 349.23, 440.00], tempo:72 },
+            { id:'3', title:'Starboy', artist:'The Weeknd ft. Daft Punk', dur:230, cover:'https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=600&auto=format&fit=crop&q=80', freqs:[196.00, 246.94, 293.66, 329.63], tempo:186 }
+        ];
+
+        let curIdx = 0, isPlay = true, actx = null, mg = null, sInt = null, curSec = 0, tmr = null;
+
+        window.onload = () => { loadTrack(0, true); initNebulaVisualizer(); };
+
+        function initAudio() {
+            if(!actx) {
+                actx = new (window.AudioContext||window.webkitAudioContext)();
+                mg = actx.createGain();
+                mg.gain.value = 0.3;
+                mg.connect(actx.destination);
+            }
+            if(actx.state === 'suspended') actx.resume();
+        }
+
+        function startSynth(t) {
+            initAudio(); stopSynth(); let st = 0; const bMs = (60/t.tempo)*1000;
+            sInt = setInterval(() => {
+                if(!isPlay||!actx) return;
+                const f = t.freqs[st%t.freqs.length];
+                playT(f, bMs/1000, 'sine', 0.4); playT(f*1.5, bMs/1000, 'triangle', 0.2);
+                if(st%2===0) playT(60, 0.15, 'sine', 0.5);
+                st++;
+            }, bMs);
+        }
+
+        function playT(f, d, tp, v) { const o = actx.createOscillator(), g = actx.createGain(); o.type = tp; o.frequency.value = f; g.gain.setValueAtTime(v, actx.currentTime); g.gain.exponentialRampToValueAtTime(0.0001, actx.currentTime+d); o.connect(g); g.connect(mg); o.start(); o.stop(actx.currentTime+d); }
+        function stopSynth() { if(sInt) clearInterval(sInt); }
+
+        function loadTrack(i, ap = true) {
+            curIdx = i; const t = PLAYLIST[curIdx];
+            document.getElementById('track-title').innerText = t.title;
+            document.getElementById('track-artist').innerText = t.artist;
+            document.getElementById('track-art').src = t.cover;
+            document.getElementById('time-tot').innerText = fmt(t.dur);
+            curSec = 0; updProg();
+
+            if(ap) {
+                isPlay = true; updPlayBtn(); startSynth(t); startTimer(t);
+                document.getElementById('disc').classList.add('playing');
+                showT(`Streaming "${t.title}"`);
+            } else { isPlay = false; updPlayBtn(); }
+        }
+
+        function togglePlay() {
+            isPlay = !isPlay; updPlayBtn();
+            if(isPlay) { startSynth(PLAYLIST[curIdx]); startTimer(PLAYLIST[curIdx]); document.getElementById('disc').classList.add('playing'); }
+            else { stopSynth(); clearInterval(tmr); document.getElementById('disc').classList.remove('playing'); }
+        }
+
+        function updPlayBtn() {
+            document.getElementById('icon-play').style.display = isPlay ? 'none' : 'block';
+            document.getElementById('icon-pause').style.display = isPlay ? 'block' : 'none';
+        }
+
+        function prevTrack() { loadTrack((curIdx-1+PLAYLIST.length)%PLAYLIST.length, true); }
+        function nextTrack() { loadTrack((curIdx+1)%PLAYLIST.length, true); }
+        function startTimer(t) { clearInterval(tmr); tmr = setInterval(() => { if(!isPlay) return; curSec++; if(curSec>=t.dur) nextTrack(); updProg(); }, 1000); }
+        function updProg() { document.getElementById('prog-fill').style.width = ((curSec/PLAYLIST[curIdx].dur)*100)+'%'; document.getElementById('time-curr').innerText = fmt(curSec); }
+        function seek(e) { const r = e.currentTarget.getBoundingClientRect(); curSec = Math.floor(PLAYLIST[curIdx].dur * ((e.clientX - r.left)/r.width)); updProg(); }
+        function fmt(s) { return `${Math.floor(s/60)}:${Math.floor(s%60)<10?'0':''}${Math.floor(s%60)}`; }
+
+        function initNebulaVisualizer() {
+            const canvas = document.getElementById('nebula-canvas'), ctx = canvas.getContext('2d');
+            const numBars = 72;
+            const cx = canvas.width / 2, cy = canvas.height / 2;
+            const baseRad = 138;
+
+            function draw() {
+                requestAnimationFrame(draw);
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                for (let i = 0; i < numBars; i++) {
+                    const angle = (i / numBars) * Math.PI * 2;
+                    let barLen = 4;
+                    if (isPlay) { barLen = 8 + Math.abs(Math.sin(Date.now() * 0.008 + i * 0.3)) * 28; }
+
+                    const x1 = cx + Math.cos(angle) * baseRad;
+                    const y1 = cy + Math.sin(angle) * baseRad;
+                    const x2 = cx + Math.cos(angle) * (baseRad + barLen);
+                    const y2 = cy + Math.sin(angle) * (baseRad + barLen);
+
+                    ctx.beginPath();
+                    ctx.moveTo(x1, y1);
+                    ctx.lineTo(x2, y2);
+                    ctx.lineWidth = 4;
+                    ctx.lineCap = 'round';
+                    ctx.strokeStyle = i % 2 === 0 ? '#ff007f' : '#00f2fe';
+                    ctx.stroke();
+                }
+            }
+            draw();
+        }
+
+        let tt = null; function showT(m) { const t = document.getElementById('toast'); document.getElementById('t-msg').innerText = m; t.classList.add('show'); if(tt) clearTimeout(tt); tt = setTimeout(() => t.classList.remove('show'), 3000); }
+    </script>
+</body>
+</html>
